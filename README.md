@@ -2,7 +2,7 @@
 
 `x-publisher` is a lightweight Codex skill for drafting X posts, validating local character counts, splitting long drafts into threads, and opening prefilled X composer links.
 
-V1 intentionally avoids direct API posting. It does not need X credentials.
+V1 intentionally avoids direct API posting. V2 adds a dry-run-first MCP server for curated X publishing and account-management workflows.
 
 ## Install Locally
 
@@ -28,6 +28,29 @@ python scripts/x_publish.py thread --file post.md
 ```
 
 Add `--open` to `intent` to open the generated composer URL in the default browser.
+
+## MCP V2
+
+List tools:
+
+```powershell
+python -m x_publisher_mcp.server --list-tools
+```
+
+Run the MCP server:
+
+```powershell
+python -m pip install -r requirements.txt
+python -m x_publisher_mcp.server
+```
+
+Default endpoint:
+
+```text
+http://127.0.0.1:8765/mcp
+```
+
+The MCP server defaults to `dry-run`; mutating tools require an exact confirmation string and do not call X unless live mode is explicitly enabled with a separately configured official XMCP backend.
 
 ## V2 Direction
 

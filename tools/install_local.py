@@ -13,6 +13,7 @@ RUNTIME_FILES = [
     "SKILL.md",
     "agents/openai.yaml",
     "scripts/x_publish.py",
+    "references/mcp-usage.md",
     "references/posting-workflow.md",
     "references/x-api-mcp-v2.md",
 ]

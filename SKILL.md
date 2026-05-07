@@ -7,7 +7,7 @@ description: Draft, validate, split into threads, and open X/Twitter composer in
 
 ## Overview
 
-Prepare X posts safely from local drafts. V1 creates validated composer links only; it never posts directly and never asks for X API credentials.
+Prepare X posts safely from local drafts. V1 creates validated composer links only; v2 adds a dry-run-first MCP server in the source repo for curated posting and account-management workflows.
 
 ## Workflow
 
@@ -32,12 +32,14 @@ Add `--open` to `intent` only after the generated URL looks correct.
 
 ## Guardrails
 
-- Do not post directly from this skill. If asked for direct posting, explain that v1 only opens X composer links and read `references/x-api-mcp-v2.md` for the future MCP path.
-- Do not request or store X API keys for v1.
+- Do not post directly from the v1 CLI. If asked for direct posting, use the v2 MCP guidance in `references/mcp-usage.md` and require exact confirmation for mutating tools.
+- Do not request or store X API keys in prompts or committed files.
 - Treat local character counts as a conservative approximation. For direct API posting, re-check current X docs and use the official `twitter-text` guidance.
 - Prefer shortening the draft before splitting into a thread unless the user explicitly wants a thread.
+- Treat the source repo as authoritative. Sync the installed skill from the source repo with `python tools/install_local.py`.
 
 ## References
 
 - `references/posting-workflow.md`: Practical draft, validation, and composer-link workflow.
-- `references/x-api-mcp-v2.md`: Notes for the future full X API MCP/plugin direction.
+- `references/mcp-usage.md`: How to list and run the v2 MCP server.
+- `references/x-api-mcp-v2.md`: Notes for the full X API MCP/plugin direction.
