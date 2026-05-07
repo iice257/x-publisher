@@ -1,0 +1,4 @@
+interface:
+  display_name: "X Publisher"
+  short_description: "Draft and publish X composer links"
+  default_prompt: "Use $x-publisher to draft, validate, thread, and open an X composer link for a post."
