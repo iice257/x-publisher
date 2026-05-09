@@ -50,9 +50,27 @@ def main(argv: list[str] | None = None) -> int:
     try:
         config = Config.from_env()
         if args.host:
-            config = Config(mode=config.mode, host=args.host, port=config.port, xmcp_url=config.xmcp_url, allow_live=config.allow_live)
+            config = Config(
+                mode=config.mode,
+                host=args.host,
+                port=config.port,
+                backend=config.backend,
+                xmcp_url=config.xmcp_url,
+                x_api_base_url=config.x_api_base_url,
+                x_user_access_token=config.x_user_access_token,
+                allow_live=config.allow_live,
+            )
         if args.port:
-            config = Config(mode=config.mode, host=config.host, port=args.port, xmcp_url=config.xmcp_url, allow_live=config.allow_live)
+            config = Config(
+                mode=config.mode,
+                host=config.host,
+                port=args.port,
+                backend=config.backend,
+                xmcp_url=config.xmcp_url,
+                x_api_base_url=config.x_api_base_url,
+                x_user_access_token=config.x_user_access_token,
+                allow_live=config.allow_live,
+            )
         mcp = build_mcp(config)
         mcp.run(transport="http", host=config.host, port=config.port)
         return 0

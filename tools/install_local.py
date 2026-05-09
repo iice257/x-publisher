@@ -11,11 +11,17 @@ SOURCE_ROOT = Path(__file__).resolve().parents[1]
 TARGET_ROOT = Path.home() / ".codex" / "skills" / "x-publisher"
 RUNTIME_FILES = [
     "SKILL.md",
+    "requirements.txt",
     "agents/openai.yaml",
+    "scripts/list_mcp_tools.py",
+    "scripts/start_mcp.py",
     "scripts/x_publish.py",
     "references/mcp-usage.md",
     "references/posting-workflow.md",
     "references/x-api-mcp-v2.md",
+]
+RUNTIME_DIRS = [
+    "x_publisher_mcp",
 ]
 
 
@@ -34,6 +40,11 @@ def main() -> int:
         target = TARGET_ROOT / relative
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(source, target)
+
+    for relative in RUNTIME_DIRS:
+        source = SOURCE_ROOT / relative
+        target = TARGET_ROOT / relative
+        shutil.copytree(source, target, ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
 
     print(f"Installed x-publisher skill to {TARGET_ROOT}")
     return 0

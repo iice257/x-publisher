@@ -1,13 +1,13 @@
 ---
 name: x-publisher
-description: Draft, validate, split into threads, and open X/Twitter composer intent links for posts without direct API posting. Use when Codex needs to prepare social launch copy, repo/project announcements, X posts, tweet threads, or shareable publishing drafts where the user should manually review before posting.
+description: Draft, validate, split into threads, open X/Twitter composer links, and use the dry-run-first MCP workflow for live X posting when local credentials are explicitly configured. Use when Codex needs to prepare social launch copy, repo/project announcements, X posts, tweet threads, or shareable publishing drafts where the user should manually review before posting.
 ---
 
 # X Publisher
 
 ## Overview
 
-Prepare X posts safely from local drafts. V1 creates validated composer links only; v2 adds a dry-run-first MCP server in the source repo for curated posting and account-management workflows.
+Prepare X posts safely from local drafts. V1 creates validated composer links; v2 adds a dry-run-first MCP server in the source repo for curated posting and account-management workflows. Live posting is opt-in only and still requires exact confirmation.
 
 ## Workflow
 
@@ -15,7 +15,7 @@ Prepare X posts safely from local drafts. V1 creates validated composer links on
 2. Run `scripts/x_publish.py validate` before sharing any post or thread.
 3. Use `scripts/x_publish.py intent` for a single post composer link.
 4. Use `scripts/x_publish.py thread` for long Markdown/text drafts.
-5. Tell the user that the browser composer is the final review step and they must click Post manually.
+5. Tell the user that the browser composer is the final review step and they must click Post manually unless they explicitly ask for the v2 live MCP workflow and local credentials are configured.
 
 ## Commands
 
@@ -32,7 +32,7 @@ Add `--open` to `intent` only after the generated URL looks correct.
 
 ## Guardrails
 
-- Do not post directly from the v1 CLI. If asked for direct posting, use the v2 MCP guidance in `references/mcp-usage.md` and require exact confirmation for mutating tools.
+- Do not post directly from the v1 CLI. If asked for direct posting, use the v2 MCP guidance in `references/mcp-usage.md`, require exact confirmation for mutating tools, and keep live credentials in environment variables only.
 - Do not request or store X API keys in prompts or committed files.
 - Treat local character counts as a conservative approximation. For direct API posting, re-check current X docs and use the official `twitter-text` guidance.
 - Prefer shortening the draft before splitting into a thread unless the user explicitly wants a thread.

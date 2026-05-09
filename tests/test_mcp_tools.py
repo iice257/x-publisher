@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import unittest
 
-from x_publisher_mcp.backend import RecordingBackend
+from x_publisher_mcp.backend import RecordingBackend, XApiBackend
 from x_publisher_mcp.registry import list_tool_names
 from x_publisher_mcp import tools
 
@@ -147,6 +147,48 @@ class McpToolTests(unittest.TestCase):
         )
         self.assertEqual(executed["status"], "ok")
         self.assertEqual(executed["plan"]["operation_id"], "followUser")
+
+    def test_x_api_backend_creates_post_with_user_token(self) -> None:
+        calls = []
+
+        def transport(method, url, body, headers):
+            calls.append((method, url, body, headers))
+            return {"data": {"id": "post-1", "text": body["text"]}}
+
+        tools.configure_backend(XApiBackend("user-token", "https://api.x.test", transport=transport))
+        response = tools.create_post("Testing live post", confirmation="create_post text=Testing live post")
+
+        self.assertEqual(response["status"], "ok")
+        self.assertEqual(calls[0][0], "POST")
+        self.assertEqual(calls[0][1], "https://api.x.test/2/tweets")
+        self.assertEqual(calls[0][2], {"text": "Testing live post"})
+        self.assertEqual(calls[0][3]["Authorization"], "Bearer user-token")
+        self.assertEqual(response["result"]["data"]["id"], "post-1")
+
+    def test_x_api_backend_creates_thread_by_reply_chaining(self) -> None:
+        calls = []
+
+        def transport(method, url, body, headers):
+            calls.append((method, url, body, headers))
+            return {"data": {"id": f"post-{len(calls)}", "text": body["text"]}}
+
+        tools.configure_backend(XApiBackend("user-token", "https://api.x.test", transport=transport))
+        text = " ".join(["thread planning keeps risky posting controlled"] * 25)
+        first = tools.create_thread(text)
+        response = tools.create_thread(text, confirmation=first["required_confirmation"])
+
+        self.assertEqual(response["status"], "ok")
+        self.assertGreater(len(calls), 1)
+        self.assertNotIn("reply", calls[0][2])
+        self.assertEqual(calls[1][2]["reply"]["in_reply_to_tweet_id"], "post-1")
+
+    def test_x_api_backend_reports_unsupported_operations(self) -> None:
+        tools.configure_backend(XApiBackend("user-token", "https://api.x.test", transport=lambda *_args: {}))
+        first = tools.follow_user("me", "target")
+        response = tools.follow_user("me", "target", confirmation=first["required_confirmation"])
+
+        self.assertEqual(response["status"], "unsupported_operation")
+        self.assertIn("X_PUBLISHER_BACKEND=xmcp", response["message"])
 
 
 if __name__ == "__main__":
