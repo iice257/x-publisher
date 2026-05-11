@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import Any
 
 from .backend import Backend, DryRunBackend, OperationPlan
+from .browser_fallback import build_browser_fallback_plan, execute_browser_fallback_plan
 from .post_text import build_intent_url, make_thread, validate_post
 
 
@@ -175,6 +176,38 @@ def create_composer_url(text: str, url: str | None = None) -> dict[str, Any]:
         "validation": result.to_dict(),
         "composer_url": build_intent_url(result.text, result.url),
     }
+
+
+def create_browser_fallback_plan(
+    text: str,
+    account_username: str | None = None,
+    repost_after_post: bool = False,
+    edge_profile_hint: str = "Work",
+) -> dict[str, Any]:
+    return build_browser_fallback_plan(
+        text,
+        account_username=account_username,
+        repost_after_post=repost_after_post,
+        edge_profile_hint=edge_profile_hint,
+    )
+
+
+def execute_browser_fallback(
+    text: str,
+    account_username: str | None = None,
+    repost_after_post: bool = False,
+    edge_profile_hint: str = "Work",
+    confirmation: str | None = None,
+    execute: bool = False,
+) -> dict[str, Any]:
+    return execute_browser_fallback_plan(
+        text,
+        account_username=account_username,
+        repost_after_post=repost_after_post,
+        edge_profile_hint=edge_profile_hint,
+        confirmation=confirmation,
+        execute=execute,
+    )
 
 
 def create_post(text: str, url: str | None = None, confirmation: str | None = None) -> dict[str, Any]:

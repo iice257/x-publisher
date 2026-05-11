@@ -12,6 +12,8 @@ EXPECTED_TOOLS = {
     "draft_post",
     "validate_post",
     "create_composer_url",
+    "create_browser_fallback_plan",
+    "execute_browser_fallback",
     "create_post",
     "create_thread",
     "delete_post",
@@ -71,6 +73,44 @@ class McpToolTests(unittest.TestCase):
         response = tools.create_post("Testing v2")
         self.assertEqual(response["status"], "confirmation_required")
         self.assertEqual(response["required_confirmation"], "create_post text=Testing v2")
+
+    def test_create_browser_fallback_plan_includes_confirmation(self) -> None:
+        response = tools.create_browser_fallback_plan("Testing browser fallback", "ICE257_", repost_after_post=True)
+
+        self.assertEqual(response["status"], "browser_fallback_plan")
+        self.assertEqual(response["browser_fallback"]["account_username"], "ICE257_")
+        self.assertTrue(response["browser_fallback"]["repost_after_post"])
+        self.assertIn("required_confirmation", response)
+
+    def test_execute_browser_fallback_requires_confirmation_then_execute_flag(self) -> None:
+        first = tools.execute_browser_fallback("Testing browser fallback", "ICE257_", repost_after_post=True)
+        self.assertEqual(first["status"], "confirmation_required")
+
+        preview = tools.execute_browser_fallback(
+            "Testing browser fallback",
+            "ICE257_",
+            repost_after_post=True,
+            confirmation=first["required_confirmation"],
+        )
+        self.assertEqual(preview["status"], "browser_execution_preview")
+
+    def test_execute_browser_fallback_calls_runner_when_confirmed(self) -> None:
+        first = tools.execute_browser_fallback("Testing browser fallback", "ICE257_", repost_after_post=True)
+        with patch(
+            "x_publisher_mcp.browser_fallback.run_edge_post_workflow",
+            return_value={"posted": True, "reposted": True},
+        ):
+            response = tools.execute_browser_fallback(
+                "Testing browser fallback",
+                "ICE257_",
+                repost_after_post=True,
+                confirmation=first["required_confirmation"],
+                execute=True,
+            )
+
+        self.assertEqual(response["status"], "ok")
+        self.assertTrue(response["result"]["posted"])
+        self.assertTrue(response["result"]["reposted"])
 
     def test_create_post_executes_with_confirmation(self) -> None:
         response = tools.create_post("Testing v2", confirmation="create_post text=Testing v2")

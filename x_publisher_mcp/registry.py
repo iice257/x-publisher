@@ -19,6 +19,8 @@ TOOL_DEFINITIONS: tuple[ToolDefinition, ...] = (
     ToolDefinition("draft_post", tools.draft_post, "Draft and validate a post without posting."),
     ToolDefinition("validate_post", tools.validate_post_tool, "Validate local weighted post length."),
     ToolDefinition("create_composer_url", tools.create_composer_url, "Create a prefilled X composer URL."),
+    ToolDefinition("create_browser_fallback_plan", tools.create_browser_fallback_plan, "Plan a confirmed Edge browser fallback post workflow."),
+    ToolDefinition("execute_browser_fallback", tools.execute_browser_fallback, "Execute a confirmed Edge browser fallback post workflow."),
     ToolDefinition("create_post", tools.create_post, "Create a post through the configured backend after confirmation."),
     ToolDefinition("create_thread", tools.create_thread, "Create a numbered thread plan through the configured backend after confirmation."),
     ToolDefinition("delete_post", tools.delete_post, "Delete a post after confirmation."),

@@ -38,6 +38,7 @@ Add `--open` to `intent` only after the generated URL looks correct.
 - Prefer shortening the draft before splitting into a thread unless the user explicitly wants a thread.
 - Treat the source repo as authoritative. Sync the installed skill from the source repo with `python tools/install_local.py`.
 - If API/XMCP publishing fails with credits, subscription, or access-tier errors, use the returned browser fallback plan. Operate only a locally signed-in browser session and verify the visible account/text before clicking Post.
+- For hands-free fallback in v2, use `create_browser_fallback_plan` first, then `execute_browser_fallback` only with exact confirmation, `execute=True`, a target account username, and the signed-in Microsoft Edge Work profile visible.
 
 ## References
 

@@ -1,2 +1,4 @@
 fastmcp
 httpx
+pyperclip; platform_system == "Windows"
+pywinauto; platform_system == "Windows"

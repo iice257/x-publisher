@@ -78,6 +78,8 @@ Browser fallback rules:
 - Verify the visible account and text before clicking Post.
 - For threads, post the first item, then reply to the previous posted item for each later chunk.
 
+V2 also exposes `create_browser_fallback_plan` and `execute_browser_fallback`. Execution is Windows/Edge-only for now, requires `pywinauto` and `pyperclip`, requires an exact confirmation string, and requires `execute=True` before it will operate the browser. It verifies the exact visible post text on the target profile, and when `repost_after_post=True`, confirms the exact post changes to `Reposted`.
+
 ## Full Account-Management Surface
 
 X now has an official XMCP server. Use `X_PUBLISHER_BACKEND=xmcp` when the task needs broader account-management operations beyond the direct backend's focused create/delete/read basics.

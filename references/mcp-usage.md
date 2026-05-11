@@ -66,3 +66,12 @@ Use the returned `browser_fallback` object:
 - `kind=browser_thread`: open the first composer URL, post it, then use the browser reply composer on each posted item for later chunks.
 
 Do not ask for passwords, 2FA codes, or cookies in chat. The user signs in locally; the agent operates only the browser session it can already see.
+
+For Windows Edge automation, use:
+
+```text
+create_browser_fallback_plan(text, account_username, repost_after_post)
+execute_browser_fallback(text, account_username, repost_after_post, confirmation, execute=True)
+```
+
+`execute_browser_fallback` refuses to run until the exact confirmation matches and `execute=True` is passed. It verifies the exact post text on the target profile and verifies `Reposted` after a repost. If the Edge Work profile is not visible or the dependencies are missing, it returns an actionable browser error instead of falling back to API credentials.
