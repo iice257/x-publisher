@@ -32,6 +32,6 @@ The browser composer is the publishing confirmation step. The user must review a
 
 ## Notes
 
-- V1 does not post through the API.
-- V1 does not need API keys, OAuth credentials, or paid X API access.
+- The local composer-link CLI does not post through the API.
+- Composer-link mode does not need API keys, OAuth credentials, or paid X API access.
 - Local character counting is conservative and intended to prevent obvious failures before the composer opens.

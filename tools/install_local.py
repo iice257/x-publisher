@@ -32,6 +32,21 @@ def main() -> int:
         raise SystemExit(f"Unexpected target root: {TARGET_ROOT}")
 
     if TARGET_ROOT.exists():
+        for path in TARGET_ROOT.rglob("*"):
+            if path.is_dir():
+                try:
+                    path.chmod(0o700)
+                except OSError:
+                    pass
+            else:
+                try:
+                    path.chmod(0o600)
+                except OSError:
+                    pass
+        try:
+            TARGET_ROOT.chmod(0o700)
+        except OSError:
+            pass
         shutil.rmtree(TARGET_ROOT)
     TARGET_ROOT.mkdir(parents=True)
 

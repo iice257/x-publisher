@@ -1,6 +1,6 @@
 # X Publisher MCP Usage
 
-V2 adds a curated MCP server in the source repo. It is safe by default: `dry-run` mode previews mutating actions and never calls X.
+The curated MCP server is safe by default: `dry-run` mode previews mutating actions and never calls X.
 
 ## Start
 

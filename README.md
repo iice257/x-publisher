@@ -1,8 +1,11 @@
 # X Publisher
 
-`x-publisher` is a lightweight Codex skill for drafting X posts, validating local character counts, splitting long drafts into threads, and opening prefilled X composer links.
+`x-publisher` is a Codex skill and MCP runtime for X/Twitter publishing workflows.
 
-V1 intentionally avoids direct API posting. V2 adds a dry-run-first MCP server for curated X publishing and account-management workflows.
+It supports two paths:
+
+- Local draft/composer workflow: draft, validate, split into threads, and open prefilled X composer links.
+- MCP workflow: dry-run-first tools for posting, thread creation, deletes, lookups, and account-management delegation through either the direct X API backend or an official XMCP backend.
 
 ## Install Locally
 
@@ -21,15 +24,15 @@ C:\Users\ngaremuki\.codex\skills\x-publisher
 ## CLI
 
 ```powershell
-python scripts/x_publish.py draft --text "Shipped x-publisher v1."
-python scripts/x_publish.py validate --text "Shipped x-publisher v1." --url "https://github.com/iice257/x-publisher"
-python scripts/x_publish.py intent --text "Shipped x-publisher v1." --url "https://github.com/iice257/x-publisher"
+python scripts/x_publish.py draft --text "Shipped x-publisher: local drafts plus a dry-run-first MCP posting path."
+python scripts/x_publish.py validate --text "Shipped x-publisher." --url "https://github.com/iice257/x-publisher"
+python scripts/x_publish.py intent --text "Shipped x-publisher." --url "https://github.com/iice257/x-publisher"
 python scripts/x_publish.py thread --file post.md
 ```
 
 Add `--open` to `intent` to open the generated composer URL in the default browser.
 
-## MCP V2
+## MCP Runtime
 
 List tools:
 
@@ -64,6 +67,6 @@ python -m x_publisher_mcp.server
 
 The direct backend uses X API v2 `POST /2/tweets` for posting. Keep tokens in local environment variables only.
 
-## V2 Direction
+## Full Account-Management Surface
 
-X now has an official XMCP server. V2 should build on or wrap that official MCP/OpenAPI surface and add safer agent workflows for posting, account context, search, and management.
+X now has an official XMCP server. Use `X_PUBLISHER_BACKEND=xmcp` when the task needs broader account-management operations beyond the direct backend's focused create/delete/read basics.

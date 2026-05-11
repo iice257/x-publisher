@@ -1,15 +1,15 @@
-# X API MCP V2 Notes
+# X API MCP Notes
 
-V2 should support direct posting and broader X account management through MCP/plugin tooling. Re-check current X docs before implementing because access tiers, pricing, scopes, and rate limits change.
+The MCP runtime supports direct posting and targeted read/delete operations through the direct X API backend, with broader X account management delegated to an official XMCP backend. Re-check current X docs before expanding because access tiers, pricing, scopes, and rate limits change.
 
 ## Current Implementation Direction
 
 - X has an official XMCP server that exposes X API operations from the OpenAPI specification.
-- `x-publisher` v2 adds a curated FastMCP layer in the source repo.
+- `x-publisher` includes a curated FastMCP layer in the source repo.
 - Prefer running official XMCP separately and pointing `X_PUBLISHER_XMCP_URL` at it when credentials are ready.
 - Add a safer product layer for agent workflows instead of exposing every raw API operation by default.
 
-## Desired V2 Capabilities
+## Desired Full-Surface Capabilities
 
 - Draft, validate, and post single posts.
 - Create threads with explicit confirmation before publishing.
@@ -27,6 +27,6 @@ V2 should support direct posting and broader X account management through MCP/pl
 - Keep credentials out of prompts and repository files.
 - Respect API rate limits and display actionable errors when limits or access tiers block an operation.
 
-## V1 And V2 Boundary
+## Composer CLI And MCP Boundary
 
-The v1 CLI does not post directly. The v2 MCP server defaults to dry-run and requires exact confirmation for mutating tools. Live calls require a separately configured official XMCP backend and explicit local config.
+The local composer-link CLI does not post directly. The MCP server defaults to dry-run and requires exact confirmation for mutating tools. Live calls require explicit local config and either the direct X API backend or a separately configured official XMCP backend.
