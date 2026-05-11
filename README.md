@@ -67,6 +67,17 @@ python -m x_publisher_mcp.server
 
 The direct backend uses X API v2 `POST /2/tweets` for posting. Keep tokens in local environment variables only.
 
+## Browser Fallback
+
+If X API/XMCP returns a credit, subscription, or access-tier error while publishing, `create_post` and `create_thread` return `browser_fallback_available` with composer URLs and exact browser steps. This is intentional: free developer accounts may be unable to post through the API, while a signed-in browser session can still use the normal X composer.
+
+Browser fallback rules:
+
+- Keep the same confirmation gate before any browser post.
+- Use a locally signed-in browser; never request passwords or 2FA codes in chat.
+- Verify the visible account and text before clicking Post.
+- For threads, post the first item, then reply to the previous posted item for each later chunk.
+
 ## Full Account-Management Surface
 
 X now has an official XMCP server. Use `X_PUBLISHER_BACKEND=xmcp` when the task needs broader account-management operations beyond the direct backend's focused create/delete/read basics.

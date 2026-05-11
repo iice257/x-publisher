@@ -3,7 +3,7 @@ from __future__ import annotations
 import unittest
 from unittest.mock import patch
 
-from x_publisher_mcp.backend import OperationPlan, RecordingBackend, XApiBackend, XmcpBackend
+from x_publisher_mcp.backend import Backend, OperationPlan, RecordingBackend, XApiBackend, XmcpBackend
 from x_publisher_mcp.registry import list_tool_names
 from x_publisher_mcp import tools
 
@@ -41,6 +41,18 @@ EXPECTED_TOOLS = {
     "preview_x_operation",
     "execute_x_operation",
 }
+
+
+class FailingBackend(Backend):
+    def __init__(self, message: str):
+        self.message = message
+
+    def execute(self, plan: OperationPlan) -> dict:
+        return {
+            "status": "backend_error",
+            "message": self.message,
+            "plan": plan.to_dict(),
+        }
 
 
 class McpToolTests(unittest.TestCase):
@@ -204,6 +216,27 @@ class McpToolTests(unittest.TestCase):
         self.assertEqual(response["status"], "backend_error")
         self.assertIn("Payment Required", response["message"])
         self.assertEqual(response["plan"]["operation_id"], "createPosts")
+
+    def test_create_post_offers_browser_fallback_for_credit_errors(self) -> None:
+        tools.configure_backend(FailingBackend("HTTP error 402: Payment Required - CreditsDepleted"))
+        first = tools.create_post("Fallback test")
+        response = tools.create_post("Fallback test", confirmation=first["required_confirmation"])
+
+        self.assertEqual(response["status"], "browser_fallback_available")
+        self.assertEqual(response["browser_fallback"]["kind"], "browser_post")
+        self.assertIn("intent/tweet", response["browser_fallback"]["composer_url"])
+        self.assertEqual(response["browser_fallback"]["text"], "Fallback test")
+
+    def test_create_thread_offers_browser_fallback_for_credit_errors(self) -> None:
+        tools.configure_backend(FailingBackend("Your enrolled account does not have any credits"))
+        text = " ".join(["browser fallback keeps the posting path usable"] * 25)
+        first = tools.create_thread(text)
+        response = tools.create_thread(text, confirmation=first["required_confirmation"])
+
+        self.assertEqual(response["status"], "browser_fallback_available")
+        self.assertEqual(response["browser_fallback"]["kind"], "browser_thread")
+        self.assertGreater(len(response["browser_fallback"]["posts"]), 1)
+        self.assertIn("reply to the previous", " ".join(response["browser_fallback"]["steps"]))
 
 
 if __name__ == "__main__":

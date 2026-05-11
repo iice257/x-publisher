@@ -9,6 +9,17 @@ from .post_text import build_intent_url, make_thread, validate_post
 
 
 _BACKEND: Backend = DryRunBackend()
+_BROWSER_FALLBACK_MARKERS = (
+    "creditsdepleted",
+    "payment required",
+    "does not have any credits",
+    "api returned http 402",
+    "http error 402",
+    "subscription",
+    "access tier",
+    "not authorized",
+    "forbidden",
+)
 
 
 def configure_backend(backend: Backend) -> None:
@@ -52,11 +63,80 @@ def _execute(plan: OperationPlan, confirmation: str | None = None) -> dict[str, 
     blocked = _confirmation_response(plan, confirmation)
     if blocked:
         return blocked
-    return _BACKEND.execute(plan)
+    response = _BACKEND.execute(plan)
+    return _with_browser_fallback(plan, response)
 
 
 def _plan(operation_id: str, payload: dict[str, Any], summary: str, *, mutating: bool = True, category: str = "general") -> OperationPlan:
     return OperationPlan(operation_id=operation_id, payload=payload, summary=summary, mutating=mutating, category=category)
+
+
+def _with_browser_fallback(plan: OperationPlan, response: dict[str, Any]) -> dict[str, Any]:
+    if plan.operation_id != "createPosts" or response.get("status") != "backend_error":
+        return response
+    if not _looks_like_browser_fallback_case(response):
+        return response
+    fallback = _browser_fallback_plan(plan)
+    if not fallback:
+        return response
+    return {
+        "status": "browser_fallback_available",
+        "message": "The X API/XMCP backend could not publish. Use the browser composer fallback with the same confirmed text.",
+        "api_error": response,
+        "plan": plan.to_dict(),
+        "browser_fallback": fallback,
+    }
+
+
+def _looks_like_browser_fallback_case(response: dict[str, Any]) -> bool:
+    text = " ".join(str(value) for value in (response.get("message"), response.get("response")) if value is not None).lower()
+    return any(marker in text for marker in _BROWSER_FALLBACK_MARKERS)
+
+
+def _browser_fallback_plan(plan: OperationPlan) -> dict[str, Any] | None:
+    payload = plan.payload
+    if isinstance(payload.get("thread"), list):
+        posts = []
+        for index, operation in enumerate(payload["thread"], 1):
+            operation_payload = operation.get("payload") if isinstance(operation, dict) else None
+            text = operation_payload.get("text") if isinstance(operation_payload, dict) else None
+            if not isinstance(text, str) or not text.strip():
+                continue
+            posts.append(
+                {
+                    "index": index,
+                    "text": text,
+                    "composer_url": build_intent_url(text),
+                }
+            )
+        if not posts:
+            return None
+        return {
+            "kind": "browser_thread",
+            "requires_signed_in_browser": True,
+            "posts": posts,
+            "steps": [
+                "Open the first composer_url in a signed-in browser.",
+                "Verify the visible account and post text before clicking Post.",
+                "For each later post, reply to the previous posted item in the browser and paste the next text.",
+                "Do not use API credentials for this fallback.",
+            ],
+        }
+
+    text = payload.get("text")
+    if not isinstance(text, str) or not text.strip():
+        return None
+    return {
+        "kind": "browser_post",
+        "requires_signed_in_browser": True,
+        "text": text,
+        "composer_url": build_intent_url(text),
+        "steps": [
+            "Open composer_url in a signed-in browser.",
+            "Verify the visible account and post text before clicking Post.",
+            "Do not use API credentials for this fallback.",
+        ],
+    }
 
 
 def draft_post(text: str, url: str | None = None) -> dict[str, Any]:

@@ -37,6 +37,7 @@ Add `--open` to `intent` only after the generated URL looks correct.
 - Treat local character counts as a conservative approximation. For direct API posting, re-check current X docs and use the official `twitter-text` guidance.
 - Prefer shortening the draft before splitting into a thread unless the user explicitly wants a thread.
 - Treat the source repo as authoritative. Sync the installed skill from the source repo with `python tools/install_local.py`.
+- If API/XMCP publishing fails with credits, subscription, or access-tier errors, use the returned browser fallback plan. Operate only a locally signed-in browser session and verify the visible account/text before clicking Post.
 
 ## References
 

@@ -51,3 +51,18 @@ X_PUBLISHER_X_USER_ACCESS_TOKEN=<user-context-token>
 The direct backend supports create post, create thread by reply chaining, delete post, user lookup, and post lookup. Broader account-management operations should use `X_PUBLISHER_BACKEND=xmcp`.
 
 The curated tools still require exact confirmation for posting, deleting, following, blocking, list changes, bookmarks, reposts, and likes.
+
+## Browser Fallback
+
+When API publishing fails because the account has no API credits, no eligible access tier, or a similar policy block, `create_post` and `create_thread` return:
+
+```text
+status=browser_fallback_available
+```
+
+Use the returned `browser_fallback` object:
+
+- `kind=browser_post`: open `composer_url` in a signed-in browser, verify the visible account and text, then click Post.
+- `kind=browser_thread`: open the first composer URL, post it, then use the browser reply composer on each posted item for later chunks.
+
+Do not ask for passwords, 2FA codes, or cookies in chat. The user signs in locally; the agent operates only the browser session it can already see.
