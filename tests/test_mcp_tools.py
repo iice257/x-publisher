@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 import unittest
+from unittest.mock import patch
 
-from x_publisher_mcp.backend import RecordingBackend, XApiBackend
+from x_publisher_mcp.backend import OperationPlan, RecordingBackend, XApiBackend, XmcpBackend
 from x_publisher_mcp.registry import list_tool_names
 from x_publisher_mcp import tools
 
@@ -189,6 +190,20 @@ class McpToolTests(unittest.TestCase):
 
         self.assertEqual(response["status"], "unsupported_operation")
         self.assertIn("X_PUBLISHER_BACKEND=xmcp", response["message"])
+
+    def test_xmcp_backend_returns_structured_tool_errors(self) -> None:
+        plan = OperationPlan("createPosts", {"text": "test"}, "create_post text=test")
+        backend = XmcpBackend("http://127.0.0.1:8010/mcp")
+
+        async def fail(_plan):
+            raise RuntimeError("HTTP error 402: Payment Required")
+
+        with patch.object(backend, "_execute_async", fail):
+            response = backend.execute(plan)
+
+        self.assertEqual(response["status"], "backend_error")
+        self.assertIn("Payment Required", response["message"])
+        self.assertEqual(response["plan"]["operation_id"], "createPosts")
 
 
 if __name__ == "__main__":

@@ -72,8 +72,15 @@ class XmcpBackend(Backend):
                 "message": "Install FastMCP dependencies with `python -m pip install -r requirements.txt` before using live XMCP calls.",
                 "plan": plan.to_dict(),
             }
-        async with Client(self.xmcp_url) as client:
-            result = await client.call_tool(plan.operation_id, plan.payload)
+        try:
+            async with Client(self.xmcp_url) as client:
+                result = await client.call_tool(plan.operation_id, plan.payload)
+        except Exception as exc:
+            return {
+                "status": "backend_error",
+                "message": f"Official XMCP call failed: {exc}",
+                "plan": plan.to_dict(),
+            }
         return {
             "status": "ok",
             "message": "Operation executed through official XMCP.",
