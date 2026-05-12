@@ -1,11 +1,11 @@
 # X Publisher
 
-`x-publisher` is a Codex skill and MCP runtime for X/Twitter publishing workflows.
+`x-publisher` is a Codex skill and MCP runtime for X/Twitter publishing workflows. It is browser-first by default because most users will not have paid X developer console access.
 
 It supports two paths:
 
 - Local draft/composer workflow: draft, validate, split into threads, and open prefilled X composer links.
-- MCP workflow: dry-run-first tools for posting, thread creation, deletes, lookups, and account-management delegation through either the direct X API backend or an official XMCP backend.
+- MCP workflow: dry-run-first tools for browser fallback planning/execution, posting, thread creation, deletes, lookups, and account-management delegation through either the direct X API backend or an official XMCP backend.
 
 ## Install Locally
 
@@ -55,7 +55,7 @@ http://127.0.0.1:8765/mcp
 
 The MCP server defaults to `dry-run`; mutating tools require an exact confirmation string and do not call X unless live mode is explicitly enabled.
 
-Live mode can use either a separately configured official XMCP backend or the focused direct X API backend for create/delete/read basics:
+Live mode can use either a separately configured official XMCP backend or the focused direct X API backend for create/delete/read basics. Before recommending live API/XMCP posting, ask whether the user has a free or paid X developer account; free accounts often cannot publish through API/XMCP, so browser use should remain the normal path unless suitable paid access and local credentials are confirmed:
 
 ```powershell
 $env:X_PUBLISHER_MODE="live"

@@ -1,6 +1,6 @@
 # X Publisher MCP Usage
 
-The curated MCP server is safe by default: `dry-run` mode previews mutating actions and never calls X.
+The curated MCP server is safe by default: `dry-run` mode previews mutating actions and never calls X. For publishing, prefer browser use first because most users will not have paid X developer console access.
 
 ## Start
 
@@ -30,7 +30,9 @@ http://127.0.0.1:8765/mcp
 
 ## Live Backend
 
-Live X calls require explicit local config. For the broadest surface, use a separately configured official XMCP server:
+Live X calls require explicit local config. Before recommending this path, ask whether the user has a free or paid X developer account; free accounts often cannot publish through API/XMCP, so browser use should remain the default unless suitable paid access and local credentials are confirmed.
+
+For the broadest surface, use a separately configured official XMCP server:
 
 ```text
 X_PUBLISHER_MODE=live

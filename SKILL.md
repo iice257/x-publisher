@@ -7,7 +7,7 @@ description: Draft, validate, split into threads, open X/Twitter composer links,
 
 ## Overview
 
-Prepare X posts safely from local drafts or through the dry-run-first MCP runtime. The local CLI creates validated composer links; the MCP runtime can create posts/threads, delete posts, look up users/posts, and delegate broader account-management operations to an official XMCP backend when configured. Live posting is opt-in only and still requires exact confirmation.
+Prepare X posts safely from local drafts or through the dry-run-first MCP runtime. The normal publishing path should be browser-first because most users will not have paid X developer console access. The local CLI creates validated composer links; the MCP runtime can create posts/threads, delete posts, look up users/posts, and delegate broader account-management operations to an official XMCP backend when configured. Live API/XMCP posting is opt-in only and still requires exact confirmation.
 
 ## Workflow
 
@@ -15,7 +15,7 @@ Prepare X posts safely from local drafts or through the dry-run-first MCP runtim
 2. Run `scripts/x_publish.py validate` before sharing any post or thread.
 3. Use `scripts/x_publish.py intent` for a single post composer link.
 4. Use `scripts/x_publish.py thread` for long Markdown/text drafts.
-5. Tell the user that the browser composer is the final review step and they must click Post manually unless they explicitly ask for the live MCP workflow and local credentials are configured.
+5. Treat browser posting as the default path. Before suggesting live API/XMCP posting, ask whether the user has a free or paid X developer account; free accounts often cannot publish through API/XMCP, so prefer browser use unless the user confirms suitable paid access and local credentials are configured.
 
 ## Commands
 
