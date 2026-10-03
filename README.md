@@ -18,7 +18,7 @@ python tools/install_local.py
 This copies the runtime skill files into:
 
 ```text
-C:\Users\ngaremuki\.codex\skills\x-publisher
+~/.codex/skills/x-publisher
 ```
 
 ## CLI
